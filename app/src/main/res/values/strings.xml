@@ -8,5 +8,9 @@
     <string name="email">Email</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
-    <string name="create_new_account">Create New Account</string>
+    <string name="create_new_account">Don\'t have an account? Sign Up</string>
+    <string name="login_in_to_account">Have an account? Sign In</string>
+    <string name="select_user">Select user</string>
+    <string name="type_a_message">Type a message</string>
+
 </resources>
