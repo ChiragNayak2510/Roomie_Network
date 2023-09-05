@@ -3,31 +3,21 @@ package com.example.roomates.Model;
 public class User {
     private  String id;
     private  String userName;
-    private  String fullName;
     private String email;
     private  String imageUrl;
-    private  String bio;
 
-    public User(String id, String userName, String fullName, String email, String imageUrl, String bio) {
+    public User(String id, String userName, String fullName, String email, String imageUrl) {
         this.id = id;
         this.userName = userName;
-        this.fullName = fullName;
         this.email = email;
         this.imageUrl = imageUrl;
-        this.bio = bio;
     }
 
     public  User(){
     }
 
 
-    public String getBio() {
-        return bio;
-    }
 
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
 
     public String getImageUrl() {
         return imageUrl;
@@ -37,13 +27,6 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
     public String getUserName() {
         return userName;

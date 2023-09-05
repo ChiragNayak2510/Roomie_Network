@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -25,28 +26,31 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="58dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="-10dp"
-                    android:src="@drawable/rentit_logo"/>
-                    <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                    android:layout_alignParentStart="true"
-                        android:textColor="@color/grey"
-                        android:textSize="28sp"
-                    android:text="RENT-IT"/>
-                </LinearLayout>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_inbox"/>
 
+
+                    <TextView
+                        android:layout_width="346dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:gravity="center"
+                        android:text="CoLiving"
+                        android:textColor="@color/primary"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imageSignOut"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:layout_marginRight="@dimen/_18sdp"
+                        android:background="@drawable/background_image"
+                        android:padding="@dimen/_6sdp"
+                        android:src="@drawable/ic_logout"
+                        android:tint="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
 
             </RelativeLayout>
 

@@ -15,12 +15,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_margin="10dp"
-                android:id="@+id/image_profile"
-                            />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:orientation="vertical"
@@ -33,7 +27,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textColor="@color/black"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
                 <!--                android:text="UserName"/>-->
@@ -41,6 +36,7 @@
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/grey"
                 android:textSize="14sp"
@@ -56,7 +52,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/primary"
 
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -69,7 +65,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
 
-            android:textColor="@color/grey"
+            android:textColor="@color/white"
             android:textStyle="bold" />
         <!--            android:text="Discription"/>-->
         <ImageView
@@ -87,7 +83,8 @@
                 android:id="@+id/like"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_like" />
+                android:src="@drawable/ic_like"
+                android:visibility="invisible"/>
 
             <ImageView
                 android:id="@+id/comment"
@@ -95,14 +92,16 @@
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@id/like"
-                android:src="@drawable/ic_comment" />
+                android:src="@drawable/ic_comment"
+                android:visibility="invisible"/>
 
             <ImageView
                 android:id="@+id/bookmark"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_bookmark" />
+                android:src="@drawable/ic_bookmark"
+                android:visibility="invisible"/>
         </RelativeLayout>
 
         <TextView
@@ -113,7 +112,8 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:textColor="@color/grey"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible"/>
 
         <TextView
             android:id="@+id/comments"
@@ -122,7 +122,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/grey" />
+            android:textColor="@color/grey"
+            android:visibility="invisible"/>
 <!--            android:text="View All 20 Comments"-->
 
     </LinearLayout>

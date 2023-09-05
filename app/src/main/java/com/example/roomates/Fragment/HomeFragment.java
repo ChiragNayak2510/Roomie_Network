@@ -42,14 +42,13 @@ public class HomeFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
         postLists=new ArrayList<>();
-//        postAdapter=new PostAdapter(getContext(),postLists);
+        postAdapter=new PostAdapter(getContext(),postLists);
         recyclerView.setAdapter(postAdapter);
         try {
-            checkFollowing();
+            readPosts();
         }catch (Exception e){
             Log.d("CheckFollow", "Check: "+e.getMessage());
         }
-
 
         return view;
     }
@@ -75,7 +74,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void readPosts(){
-
         try {
             DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Posts");
             reference.addValueEventListener(new ValueEventListener() {
@@ -84,7 +82,14 @@ public class HomeFragment extends Fragment {
                     postLists.clear();
                     for (DataSnapshot snapshot1:snapshot.getChildren()){
                         Post post=snapshot1.getValue(Post.class);
+                        Log.d("posthome",post.getPostId());
+                        Log.d("posthome",post.getEmail());
+                        Log.d("posthome",post.getDescription());
+                        Log.d("posthome",post.getTitle());
+                        Log.d("posthome",post.getPostImage());
                         postLists.add(post);
+                        Log.d("posthome",String.valueOf(postLists.size()));
+
                         //when want to see the posts that you are following only
 //                        for(String id:followingList){
 //                            if(post.getPublisher().equals(id)){

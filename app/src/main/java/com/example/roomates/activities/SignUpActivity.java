@@ -19,6 +19,8 @@ import com.example.roomates.R;
 import com.example.roomates.databinding.ActivitySignUpBinding;
 import com.example.roomates.utilities.Constants;
 import com.example.roomates.utilities.PreferenceManager;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.ktx.Firebase;
 
@@ -61,11 +63,14 @@ public class SignUpActivity extends AppCompatActivity {
     private void signUp(){
         loading(true);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
+        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Users");
         HashMap<String,Object> user = new HashMap<>();
         user.put(Constants.KEY_NAME,binding.inputName.getText().toString());
         user.put(Constants.KEY_EMAIL,binding.inputEmail.getText().toString());
         user.put(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString());
         user.put(Constants.KEY_IMAGE,encodedImage);
+
+
         database.collection(Constants.KEY_COLLECTION_USERS)
                 .add(user)
                 .addOnSuccessListener(documentReference -> {
@@ -74,7 +79,14 @@ public class SignUpActivity extends AppCompatActivity {
                         preferenceManager.putString(Constants.KEY_USER_ID,documentReference.getId());
                         preferenceManager.putString(Constants.KEY_NAME,binding.inputName.getText().toString());
                         preferenceManager.putString(Constants.KEY_IMAGE,encodedImage);
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        preferenceManager.putString(Constants.KEY_EMAIL,binding.inputEmail.getText().toString());
+                        HashMap<String,Object> hashMap=new HashMap<>();
+                        hashMap.put("id",documentReference.getId());
+                        hashMap.put("userName",preferenceManager.getString(Constants.KEY_NAME));
+                        hashMap.put("imageUrl",preferenceManager.getString(Constants.KEY_IMAGE));
+                        hashMap.put("email",preferenceManager.getString(Constants.KEY_EMAIL));
+                        reference.child(documentReference.getId()).setValue(hashMap);
+                        Intent intent = new Intent(getApplicationContext(),MainActivity2.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                 })

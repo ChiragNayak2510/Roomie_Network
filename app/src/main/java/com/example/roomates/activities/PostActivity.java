@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.roomates.utilities.Constants;
+import com.example.roomates.utilities.PreferenceManager;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,24 +38,26 @@ import java.util.HashMap;
 public class PostActivity extends AppCompatActivity {
 
     Uri imageUrl;
-    String myUrl="";
+    String myUrl = "";
     StorageTask uploadTask;
     StorageReference storageReference;
 
-    ImageView close,image_added;
+    ImageView close, image_added;
     TextView post;
-    EditText description,title;
+    EditText description, title;
+
+    PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-
-        close=findViewById(R.id.close);
-        image_added=findViewById(R.id.image_added);
-        post=findViewById(R.id.post);
-        description=findViewById(R.id.description);
-        title=findViewById(R.id.title);
+        preferenceManager = new PreferenceManager(getApplicationContext());
+        close = findViewById(R.id.close);
+        image_added = findViewById(R.id.image_added);
+        post = findViewById(R.id.post);
+        description = findViewById(R.id.description);
+        title = findViewById(R.id.title);
         storageReference = FirebaseStorage.getInstance().getReference("posts");
 
         image_added.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +69,7 @@ public class PostActivity extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(PostActivity.this,MainActivity.class);
+                Intent intent = new Intent(PostActivity.this, MainActivity2.class);
                 startActivity(intent);
                 finish();
             }
@@ -74,8 +78,6 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 uploadImage();
-
-
             }
         });
     }
@@ -91,79 +93,25 @@ public class PostActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, 1);
     }
-
-    private void uploadImage() {
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Posting");
-        progressDialog.setCancelable(true);
-        progressDialog.show();
-        SharedPreferences prefs = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
-        String profile_id = prefs.getString("profileid", "none");
-
-
-        if (imageUrl != null) {
-            StorageReference fileReference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUrl));
-            uploadTask = fileReference.putFile(imageUrl);
-            Log.d("uploadTask", "Upload Task :" + uploadTask);
-            uploadTask.continueWithTask(new Continuation() {
-
-                @Override
-                public Object then(@NonNull Task task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    return fileReference.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        myUrl = downloadUri.toString();
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
-                        String postid = reference.push().getKey();
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("postid", postid);
-                        hashMap.put("postImage", myUrl);
-                        hashMap.put("description", description.getText().toString());
-                        hashMap.put("title", title.getText().toString());
-                        hashMap.put("publisher", profile_id);
-                        hashMap.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-
-                        reference.child(postid).setValue(hashMap);
-                        progressDialog.dismiss();
-                        startActivity(new Intent(PostActivity.this, MainActivity.class));
-                        finish();
-                    } else {
-                        Toast.makeText(PostActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(PostActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(this, "No Image Selected!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    //    private  void uploadImage(){
 //
+//    private void uploadImage() {
 //        ProgressDialog progressDialog = new ProgressDialog(this);
 //        progressDialog.setMessage("Posting");
-//        progressDialog.setCancelable(false); // Prevent users from canceling the dialog
+//        progressDialog.setCancelable(true);
 //        progressDialog.show();
+//        SharedPreferences prefs = getSharedPreferences("PREFS", Context.MODE_PRIVATE);
+//        String profile_id = prefs.getString("profileid", "none");
 //
-//        if(imageUrl!=null){
-//            StorageReference fileReference =storageReference.child(System.currentTimeMillis()+"."+getFileExtension(imageUrl));
-//            uploadTask=fileReference.putFile(imageUrl);
+//
+//        if (imageUrl != null) {
+//            StorageReference fileReference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUrl));
+//            uploadTask = fileReference.putFile(imageUrl);
+//            Log.d("uploadTask", "Upload Task :" + uploadTask);
 //            uploadTask.continueWithTask(new Continuation() {
+//
 //                @Override
 //                public Object then(@NonNull Task task) throws Exception {
-//                    if (!task.isComplete()) {
+//                    if (!task.isSuccessful()) {
 //                        throw task.getException();
 //                    }
 //                    return fileReference.getDownloadUrl();
@@ -171,37 +119,92 @@ public class PostActivity extends AppCompatActivity {
 //            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
 //                @Override
 //                public void onComplete(@NonNull Task<Uri> task) {
-//                    if(task.isSuccessful()){
-//                        Uri downloadUri=task.getResult();
-//                        myUrl=downloadUri.toString();
-//                        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Posts");
-//                        String postid=reference.push().getKey();
-//                        HashMap<String,Object> hashMap=new HashMap<>();
-//                        hashMap.put("postid",postid);
-//                        hashMap.put("postimage",myUrl);
-//                        hashMap.put("description",description.getText().toString());
-//                        hashMap.put("title",title.getText().toString());
-//                        hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
+//                    if (task.isSuccessful()) {
+//                        Uri downloadUri = task.getResult();
+//                        myUrl = downloadUri.toString();
+//                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+//                        String postid = reference.push().getKey();
+//                        HashMap<String, Object> hashMap = new HashMap<>();
+//                        hashMap.put("postid", postid);
+//                        hashMap.put("postImage", myUrl);
+//                        hashMap.put("description", description.getText().toString());
+//                        hashMap.put("title", title.getText().toString());
+//                        hashMap.put("publisher", profile_id);
+//                        hashMap.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
 //
 //                        reference.child(postid).setValue(hashMap);
 //                        progressDialog.dismiss();
-//                        startActivity(new Intent(PostActivity.this,MainActivity.class));
+//                        startActivity(new Intent(PostActivity.this, MainActivity.class));
 //                        finish();
-//                    }else {
+//                    } else {
 //                        Toast.makeText(PostActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
 //                    }
 //                }
 //            }).addOnFailureListener(new OnFailureListener() {
 //                @Override
 //                public void onFailure(@NonNull Exception e) {
-//                    Toast.makeText(PostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PostActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 //                }
 //            });
-//        }else {
+//        } else {
 //            Toast.makeText(this, "No Image Selected!", Toast.LENGTH_SHORT).show();
 //        }
-//
 //    }
+
+
+            private  void uploadImage(){
+
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Posting");
+        progressDialog.setCancelable(false); // Prevent users from canceling the dialog
+        progressDialog.show();
+
+        if(imageUrl!=null){
+            StorageReference fileReference =storageReference.child(System.currentTimeMillis()+"."+getFileExtension(imageUrl));
+            uploadTask=fileReference.putFile(imageUrl);
+            uploadTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception {
+                    if (!task.isComplete()) {
+                        throw task.getException();
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri downloadUri=task.getResult();
+                        myUrl=downloadUri.toString();
+                        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Posts");
+                        String postid=reference.push().getKey();
+                        HashMap<String,Object> hashMap=new HashMap<>();
+                        hashMap.put("postId",postid);
+                        hashMap.put("postImage",myUrl);
+                        hashMap.put("description",description.getText().toString());
+                        hashMap.put("title",title.getText().toString());
+                        hashMap.put("publisher",preferenceManager.getString(Constants.KEY_USER_ID));
+                        hashMap.put("email",preferenceManager.getString(Constants.KEY_EMAIL));
+                        reference.child(postid).setValue(hashMap);
+                        progressDialog.dismiss();
+                        startActivity(new Intent(PostActivity.this,MainActivity2.class));
+                        Toast.makeText(PostActivity.this, "Posted successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }else {
+                        Toast.makeText(PostActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(PostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else {
+            Toast.makeText(this, "No Image Selected!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -213,4 +216,4 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-}
+    }
